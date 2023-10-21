@@ -13,7 +13,6 @@ public class QueueUsingTwoStacks {
 
         Scanner sc = new Scanner(System.in);
         PrintStream ps = new PrintStream(System.out);
-        StringBuilder outStr = new StringBuilder();
         CustomQueue<Integer> customQueue = new CustomQueue<>();
 
         int n = sc.nextInt();
@@ -25,11 +24,9 @@ public class QueueUsingTwoStacks {
             } else if (type == TYPE_DEQUEUE) {
                 customQueue.dequeue();
             } else {
-                outStr.append(customQueue.peek()).append("\n");
+                ps.println(customQueue.peek());
             }
         }
-
-        ps.print(outStr);
 
         ps.flush();
         ps.close();
@@ -37,12 +34,9 @@ public class QueueUsingTwoStacks {
     }
 
     static class CustomQueue<T> {
-        private static final boolean IS_ENQUEUED = true;
-        private static final boolean IS_DEQUEUED = false;
 
         private final Stack<T> enqueueStack;
         private final Stack<T> dequeueStack;
-        private Boolean enqueueDequeueFlag = IS_ENQUEUED;
 
         public CustomQueue() {
             enqueueStack = new Stack<T>();
@@ -50,38 +44,32 @@ public class QueueUsingTwoStacks {
         }
 
         public void enqueue(T element) {
-            if (enqueueDequeueFlag == IS_DEQUEUED) {
-                int n = dequeueStack.size();
-                for (int i = 0; i < n; i++) {
-                    enqueueStack.push(dequeueStack.pop());
-                }
-                enqueueDequeueFlag = IS_ENQUEUED;
-            }
             enqueueStack.push(element);
         }
 
         public T dequeue() {
-            if (enqueueDequeueFlag == IS_ENQUEUED) {
-                int n = enqueueStack.size();
-                for (int i = 0; i < n; i++) {
-                    dequeueStack.push(enqueueStack.pop());
-                }
-                enqueueDequeueFlag = IS_DEQUEUED;
+            if (dequeueStack.isEmpty()) {
+                moveToDequeueStack();
             }
             return dequeueStack.pop();
         }
 
         public T peek() {
-            if (enqueueDequeueFlag == IS_ENQUEUED) {
-                int n = enqueueStack.size();
-                for (int i = 0; i < n; i++) {
-                    dequeueStack.push(enqueueStack.pop());
-                }
-                enqueueDequeueFlag = IS_DEQUEUED;
+            if (dequeueStack.isEmpty()) {
+                moveToDequeueStack();
             }
             return dequeueStack.peek();
         }
+
+        private void moveToDequeueStack() {
+            int n = enqueueStack.size();
+            for (int i = 0; i < n; i++) {
+                dequeueStack.push(enqueueStack.pop());
+            }
+        }
+
     }
+
 
 }
 
